@@ -90,11 +90,14 @@ public class SysLoginService
                     MessageUtils.message("user.blocked", user.getRemark()));
             throw new UserBlockedException();
         }
+        //验证密码
         if (!PasswordUtil.matches(user, password))
         {
             throw new UserPasswordNotMatchException();
         }
+        //发布事件 由订阅者记录登录日志
         PublishFactory.recordLogininfor(username, Constants.LOGIN_SUCCESS, MessageUtils.message("user.login.success"));
+        //修改保存用户信息
         recordLoginInfo(user);
         return user;
     }

@@ -1,15 +1,6 @@
 package com.ruoyi.system.controller;
 
-import java.util.Set;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import cn.hutool.core.convert.Convert;
 import com.ruoyi.common.annotation.LoginUser;
 import com.ruoyi.common.auth.annotation.HasPermissions;
 import com.ruoyi.common.constant.UserConstants;
@@ -22,8 +13,10 @@ import com.ruoyi.system.domain.SysUser;
 import com.ruoyi.system.service.ISysMenuService;
 import com.ruoyi.system.service.ISysUserService;
 import com.ruoyi.system.util.PasswordUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
-import cn.hutool.core.convert.Convert;
+import java.util.Set;
 
 /**
  * 用户 提供者
@@ -44,13 +37,13 @@ public class SysUserController extends BaseController
     /**
      * 查询用户
      */
-    @GetMapping("get/{userId}")
+    @GetMapping("/get/{userId}")
     public SysUser get(@PathVariable("userId") Long userId)
     {
         return sysUserService.selectUserById(userId);
     }
 
-    @GetMapping("info")
+    @GetMapping("/info")
     public SysUser info(@LoginUser SysUser sysUser)
     {
         sysUser.setButtons(sysMenuService.selectPermsByUserId(sysUser.getUserId()));
@@ -60,7 +53,7 @@ public class SysUserController extends BaseController
     /**
      * 查询用户
      */
-    @GetMapping("find/{username}")
+    @GetMapping("/find/{username}")
     public SysUser findByUsername(@PathVariable("username") String username)
     {
         return sysUserService.selectUserByLoginName(username);
@@ -69,7 +62,7 @@ public class SysUserController extends BaseController
     /**
      * 查询拥有当前角色的所有用户
      */
-    @GetMapping("hasRoles")
+    @GetMapping("/hasRoles")
     public Set<Long> hasRoles(String roleIds)
     {
         Long[] arr=Convert.toLongArray(roleIds);
@@ -79,7 +72,7 @@ public class SysUserController extends BaseController
     /**
      * 查询所有当前部门中的用户
      */
-    @GetMapping("inDepts")
+    @GetMapping("/inDepts")
     public Set<Long> inDept(String  deptIds)
     {
         Long[] arr=Convert.toLongArray(deptIds);
@@ -89,7 +82,7 @@ public class SysUserController extends BaseController
     /**
      * 查询用户列表
      */
-    @GetMapping("list")
+    @GetMapping("/list")
     public R list(SysUser sysUser)
     {
         startPage();
@@ -101,7 +94,7 @@ public class SysUserController extends BaseController
      * 新增保存用户
      */
     @HasPermissions("system:user:add")
-    @PostMapping("save")
+    @PostMapping("/save")
     @OperLog(title = "用户管理", businessType = BusinessType.INSERT)
     public R addSave(@RequestBody SysUser sysUser)
     {
@@ -129,7 +122,7 @@ public class SysUserController extends BaseController
      */
     @HasPermissions("system:user:edit")
     @OperLog(title = "用户管理", businessType = BusinessType.UPDATE)
-    @PostMapping("update")
+    @PostMapping("/update")
     public R editSave(@RequestBody SysUser sysUser)
     {
         if (null != sysUser.getUserId() && SysUser.isAdmin(sysUser.getUserId()))
@@ -154,7 +147,7 @@ public class SysUserController extends BaseController
      * @author zmr
      */
     @HasPermissions("system:user:edit")
-    @PostMapping("update/info")
+    @PostMapping("/update/info")
     @OperLog(title = "用户管理", businessType = BusinessType.UPDATE)
     public R updateInfo(@RequestBody SysUser sysUser)
     {
@@ -167,7 +160,7 @@ public class SysUserController extends BaseController
      * @return
      * @author zmr
      */
-    @PostMapping("update/login")
+    @PostMapping("/update/login")
     public R updateLoginRecord(@RequestBody SysUser sysUser)
     {
         return toAjax(sysUserService.updateUser(sysUser));
@@ -189,12 +182,12 @@ public class SysUserController extends BaseController
 
     /**
      * 修改状态
-     * @param sysUser
+     * @param user
      * @return
      * @author zmr
      */
     @HasPermissions("system:user:edit")
-    @PostMapping("status")
+    @PostMapping("/status")
     @OperLog(title = "用户管理", businessType = BusinessType.UPDATE)
     public R status(@RequestBody SysUser user)
     {
@@ -211,7 +204,7 @@ public class SysUserController extends BaseController
      */
     @HasPermissions("system:user:remove")
     @OperLog(title = "用户管理", businessType = BusinessType.DELETE)
-    @PostMapping("remove")
+    @PostMapping("/remove")
     public R remove(String ids) throws Exception
     {
         return toAjax(sysUserService.deleteUserByIds(ids));
